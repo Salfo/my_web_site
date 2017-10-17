@@ -14,7 +14,7 @@ weight = 60
 
 +++
 
-I have taught introductory statistics for business students several times, Math boot camp for beginning econ PhD students; and I am currently teaching a graduate level multivariate statistics course:
+I have taught introductory statistics for business students (several times), Math boot camp for beginning econ PhD students; and I am currently teaching a graduate level multivariate statistics course:
 
 - Econ-215: statistics 
 - Stat-873: Applied Multivariate Statistical Analysis
