@@ -25,12 +25,12 @@ weight = 5
   year = 2017
 
 [[education.courses]]
-  course = "Diplome d'Etude Approfondie (DEA), the equivalent of a MS in Economics"
+  course = "Masters in Economics"
   institution = "University of Ouagadougou"
   year = 2006
 
 [[education.courses]]
-  course = "Maitrise en Science Economic et Gestion, the equivalent of a Bachelor in Business Administration"
+  course = "Bachelor in Business Administration"
   institution = "University of Ouagadougou"
   year = 2004
  
