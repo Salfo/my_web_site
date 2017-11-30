@@ -16,7 +16,7 @@ bibliography: reference2.bib
 
 My work involves the use and the development of topic modeling algorithms. A surprising challenge I have had is communicating the output of topic modeling algorithms to people not familiar with text analytics. Here is my 10 cents explanation of the LDA output to my econ friends.
 
-The use of text data for <a href="http://review.chicagobooth.edu/magazine/spring-2015/why-words-are-the-new-numbers" target="_blank">economic analysis</a> is gaining attractions. One popular analytical tool is Latent Dirichlet Allocation (LDA), also called topic modeling [@Blei2003]. Succinctly put, topic modeling consists of collapsing a matrix of words counts into a reduced matrix of topics' proportions within documents. For instance, assume we have a collection of 500 documents, each containing 2000 unique words; this collection of documents (called corpus) can be represented as a dataset of 500 observations and 2000 variables (each word being a variable). Each cell in the matrix represents the count of a word in a document. The matrix is just a regular spreadsheet of data. Clearly, it is almost impossible to draw any insight from that many variables. LDA allows us to collapse the high dimensional dataset into a lower dimension, say a dimension of 10. With 10 variables, there is a hope that some insight can be drawn from the data. Following is a demonstration of LDA.
+The use of text data for <a href="http://review.chicagobooth.edu/magazine/spring-2015/why-words-are-the-new-numbers" target="_blank">economic analysis</a> is gaining attractions. One popular analytical tool is Latent Dirichlet Allocation (LDA), also called topic modeling [@Blei2003]. Succinctly put, topic modeling consists of collapsing a matrix (i.e a spreadsheet) of words counts into a reduced matrix of topics' proportions within documents. For instance, assume we have a collection of 500 documents, each containing 2000 unique words; this collection of documents (called corpus) can be represented as a dataset of 500 observations and 2000 variables (each word being a variable). Each cell in the matrix represents the count of a word in a document. The matrix is just a regular spreadsheet of data. Clearly, it is almost impossible to draw any insight from that many variables. LDA allows us to collapse the high dimensional dataset into a lower dimension, say a dimension of 10. With 10 variables, there is a hope that some insight can be drawn from the data. Following is a demonstration of LDA.
 
 # Example Data
 
@@ -52,7 +52,7 @@ Note that LDA is a matrix factorization algorithm, and a matrix factorization co
 
 ## The reduced dimension, $\theta$ matrix
 
-In this example, $D=596$, $V=1034$, $K=2$. The hope is that $\theta$ contains the essential information needed to understand the variation between observations, concerning the speeches. For instance, $\theta$ can be used to study how Democrats differ from Republicans regarding the relative importance of themes they cover in their speeches. $\theta$ can be seen as a regular spreadsheet of data, as shown below. For an extended exposition of LDA, see <a href="http://www.salfobikienga.rbind.io/post/introduction-to-lda/" target="_blank">this</a>.
+In this example, $D=596$, $V=1034$, $K=2$. $\theta$ contains the essential information needed to understand the variation between observations, concerning the speeches. For instance, $\theta$ can be used to study how Democrats differ from Republicans regarding the relative importance of themes they cover in their speeches. $\theta$ can be seen as a regular spreadsheet of data, as shown below. For an extended exposition of LDA, see <a href="http://www.salfobikienga.rbind.io/post/introduction-to-lda/" target="_blank">this</a>.
 
 ```{r, echo=FALSE, message=FALSE}
 library(topicmodels)
@@ -99,7 +99,7 @@ In sum, $\theta$ provides the essential information needed to understand variati
 
 Of what uses can we make of $\theta$? Quite a lot!
 
-$\theta$ alone, or combined with other control variables, $X$, can be used for regular statistical analysis. $\theta$ is just additional control variables. It has been used for economic analyses.
+$\theta$ alone, or combined with other control variables, $X$, can be used for regular statistical analysis. $\theta$ has been used for economic analyses.
 [@Brown2016] applied LDA to assess whether the thematic content of financial statement disclosures is  informative in predicting intentional misreporting. [@Hansen2016] uses LDA in a Factor Augmented Vector Autoregressive modeling framework. I have a working paper exploring the relationship between US governors commitments to their economic agenda as stated in their public statements and the expansion of business establishments in their states [@Bikienga2017]. For a survey of the use of LDA and other text analytics tools in economics, see [@Gentzkow2017].
 
 # Illustration of the use of $\theta$
@@ -182,7 +182,7 @@ But, LDA is just another factor model algorithm. It is closely related to princi
 
 #Conclusion
 
-In sum, topic modeling in general and LDA in particular is a dimension reduction method. It consists of collapsing a matrix of words counts into a reduced matrix of topics distributions. Hopefully this illustration provides a sense of its usefulness for statistcal analysis. 
+In sum, topic modeling in general and LDA in particular is a dimension reduction method. It consists of collapsing a matrix of words counts into a reduced matrix of topics distributions. This illustration provides a sense of its usefulness for statistical analysis. 
 
 
 # References

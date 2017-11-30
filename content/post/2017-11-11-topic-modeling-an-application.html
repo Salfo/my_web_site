@@ -17,7 +17,7 @@ bibliography: reference2.bib
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <p>My work involves the use and the development of topic modeling algorithms. A surprising challenge I have had is communicating the output of topic modeling algorithms to people not familiar with text analytics. Here is my 10 cents explanation of the LDA output to my econ friends.</p>
-<p>The use of text data for <a href="http://review.chicagobooth.edu/magazine/spring-2015/why-words-are-the-new-numbers" target="_blank">economic analysis</a> is gaining attractions. One popular analytical tool is Latent Dirichlet Allocation (LDA), also called topic modeling <span class="citation">(Blei, Ng, and Jordan 2003)</span>. Succinctly put, topic modeling consists of collapsing a matrix of words counts into a reduced matrix of topics’ proportions within documents. For instance, assume we have a collection of 500 documents, each containing 2000 unique words; this collection of documents (called corpus) can be represented as a dataset of 500 observations and 2000 variables (each word being a variable). Each cell in the matrix represents the count of a word in a document. The matrix is just a regular spreadsheet of data. Clearly, it is almost impossible to draw any insight from that many variables. LDA allows us to collapse the high dimensional dataset into a lower dimension, say a dimension of 10. With 10 variables, there is a hope that some insight can be drawn from the data. Following is a demonstration of LDA.</p>
+<p>The use of text data for <a href="http://review.chicagobooth.edu/magazine/spring-2015/why-words-are-the-new-numbers" target="_blank">economic analysis</a> is gaining attractions. One popular analytical tool is Latent Dirichlet Allocation (LDA), also called topic modeling <span class="citation">(Blei, Ng, and Jordan 2003)</span>. Succinctly put, topic modeling consists of collapsing a matrix (i.e a spreadsheet) of words counts into a reduced matrix of topics’ proportions within documents. For instance, assume we have a collection of 500 documents, each containing 2000 unique words; this collection of documents (called corpus) can be represented as a dataset of 500 observations and 2000 variables (each word being a variable). Each cell in the matrix represents the count of a word in a document. The matrix is just a regular spreadsheet of data. Clearly, it is almost impossible to draw any insight from that many variables. LDA allows us to collapse the high dimensional dataset into a lower dimension, say a dimension of 10. With 10 variables, there is a hope that some insight can be drawn from the data. Following is a demonstration of LDA.</p>
 </div>
 <div id="example-data" class="section level1">
 <h1>Example Data</h1>
@@ -42,7 +42,7 @@ SoSA_topics &lt;- LDA(SoSA_data_df, # The matrix of words counts
 <p>Note that LDA is a matrix factorization algorithm, and a matrix factorization consists of decomposing a matrix into the product of two or more matrices. Intuitively, we can write: <span class="math display">\[W_{D,V} \simeq \theta_{D,V}\phi_{K,V}\]</span></p>
 <div id="the-reduced-dimension-theta-matrix" class="section level2">
 <h2>The reduced dimension, <span class="math inline">\(\theta\)</span> matrix</h2>
-<p>In this example, <span class="math inline">\(D=596\)</span>, <span class="math inline">\(V=1034\)</span>, <span class="math inline">\(K=2\)</span>. The hope is that <span class="math inline">\(\theta\)</span> contains the essential information needed to understand the variation between observations, concerning the speeches. For instance, <span class="math inline">\(\theta\)</span> can be used to study how Democrats differ from Republicans regarding the relative importance of themes they cover in their speeches. <span class="math inline">\(\theta\)</span> can be seen as a regular spreadsheet of data, as shown below. For an extended exposition of LDA, see <a href="http://www.salfobikienga.rbind.io/post/introduction-to-lda/" target="_blank">this</a>.</p>
+<p>In this example, <span class="math inline">\(D=596\)</span>, <span class="math inline">\(V=1034\)</span>, <span class="math inline">\(K=2\)</span>. <span class="math inline">\(\theta\)</span> contains the essential information needed to understand the variation between observations, concerning the speeches. For instance, <span class="math inline">\(\theta\)</span> can be used to study how Democrats differ from Republicans regarding the relative importance of themes they cover in their speeches. <span class="math inline">\(\theta\)</span> can be seen as a regular spreadsheet of data, as shown below. For an extended exposition of LDA, see <a href="http://www.salfobikienga.rbind.io/post/introduction-to-lda/" target="_blank">this</a>.</p>
 <pre class="r"><code>theta_matrix &lt;- posterior(SoSA_topics)$topics # Extract the theta matrix
 theta_matrix &lt;- round(as.data.frame(theta_matrix), digits = 3)
 names(theta_matrix) &lt;- paste(&quot;Topic.&quot;, 1:2, sep = &quot;&quot;) # Name the columns
@@ -125,7 +125,7 @@ terms_matrix[1:15, ] # Print out the first 15 words</code></pre>
 <div id="using-theta-for-statistical-analysis" class="section level1">
 <h1>Using <span class="math inline">\(\theta\)</span> for statistical analysis</h1>
 <p>Of what uses can we make of <span class="math inline">\(\theta\)</span>? Quite a lot!</p>
-<p><span class="math inline">\(\theta\)</span> alone, or combined with other control variables, <span class="math inline">\(X\)</span>, can be used for regular statistical analysis. <span class="math inline">\(\theta\)</span> is just additional control variables. It has been used for economic analyses. <span class="citation">(Brown, Crowley, and Elliott 2016)</span> applied LDA to assess whether the thematic content of financial statement disclosures is informative in predicting intentional misreporting. <span class="citation">(Hansen and McMahon 2016)</span> uses LDA in a Factor Augmented Vector Autoregressive modeling framework. I have a working paper exploring the relationship between US governors commitments to their economic agenda as stated in their public statements and the expansion of business establishments in their states <span class="citation">(Bikienga 2017)</span>. For a survey of the use of LDA and other text analytics tools in economics, see <span class="citation">(Gentzkow, Kelly, and Taddy 2017)</span>.</p>
+<p><span class="math inline">\(\theta\)</span> alone, or combined with other control variables, <span class="math inline">\(X\)</span>, can be used for regular statistical analysis. <span class="math inline">\(\theta\)</span> has been used for economic analyses. <span class="citation">(Brown, Crowley, and Elliott 2016)</span> applied LDA to assess whether the thematic content of financial statement disclosures is informative in predicting intentional misreporting. <span class="citation">(Hansen and McMahon 2016)</span> uses LDA in a Factor Augmented Vector Autoregressive modeling framework. I have a working paper exploring the relationship between US governors commitments to their economic agenda as stated in their public statements and the expansion of business establishments in their states <span class="citation">(Bikienga 2017)</span>. For a survey of the use of LDA and other text analytics tools in economics, see <span class="citation">(Gentzkow, Kelly, and Taddy 2017)</span>.</p>
 </div>
 <div id="illustration-of-the-use-of-theta" class="section level1">
 <h1>Illustration of the use of <span class="math inline">\(\theta\)</span></h1>
@@ -142,16 +142,16 @@ n_obs &lt;- sample(1:596, size = 10)
 sample_obs &lt;- df[n_obs,]
 sample_obs</code></pre>
 <pre><code>##                             Topic.1 Topic.2        state year party
-## RhodeIsland_2008_R_386.txt    0.599   0.401  RhodeIsland 2008     R
-## NewYork_2004_R_324.txt        0.288   0.712      NewYork 2004     R
-## WestVirginia_2013_D_594.txt   0.380   0.620 WestVirginia 2013     D
-## Utah_2007_R_430.txt           0.394   0.606         Utah 2007     R
-## Delaware_2003_D_79.txt        0.639   0.361     Delaware 2003     D
-## Minnesota_2003_R_236.txt      0.498   0.502    Minnesota 2003     R
-## Iowa_2007_D_158.txt           0.482   0.518         Iowa 2007     D
-## Colorado_2012_D_65.txt        0.502   0.498     Colorado 2012     D
-## Wyoming_2004_D_494.txt        0.772   0.228      Wyoming 2004     D
-## Indiana_2012_R_510.txt        0.535   0.465      Indiana 2012     R</code></pre>
+## Hawaii_2013_D_557.txt         0.505   0.495       Hawaii 2013     D
+## RhodeIsland_2010_R_388.txt    0.464   0.536  RhodeIsland 2010     R
+## Arizona_2003_D_26.txt         0.484   0.516      Arizona 2003     D
+## Montana_2011_D_272.txt        0.513   0.487      Montana 2011     D
+## NewYork_2005_R_325.txt        0.344   0.656      NewYork 2005     R
+## WestVirginia_2005_D_474.txt   0.461   0.539 WestVirginia 2005     D
+## Colorado_2006_R_59.txt        0.537   0.463     Colorado 2006     R
+## Vermont_2008_R_443.txt        0.321   0.679      Vermont 2008     R
+## Idaho_2010_R_128.txt          0.565   0.435        Idaho 2010     R
+## Vermont_2002_D_437.txt        0.463   0.537      Vermont 2002     D</code></pre>
 <p>Compute the topics’ means by party line.</p>
 <pre class="r"><code>library(dplyr)
 library(tidyr)
@@ -207,7 +207,7 @@ p_party</code></pre>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
-<p>In sum, topic modeling in general and LDA in particular is a dimension reduction method. It consists of collapsing a matrix of words counts into a reduced matrix of topics distributions. Hopefully this illustration provides a sense of its usefulness for statistcal analysis.</p>
+<p>In sum, topic modeling in general and LDA in particular is a dimension reduction method. It consists of collapsing a matrix of words counts into a reduced matrix of topics distributions. This illustration provides a sense of its usefulness for statistical analysis.</p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
