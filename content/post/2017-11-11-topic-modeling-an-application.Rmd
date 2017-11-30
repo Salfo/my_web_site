@@ -25,7 +25,7 @@ I collected 596 speeches from governors of the 50 states, spanning from 2001 to 
 
 It is customary in text analytics to delete words that we believe are not "discriminative". For instance link words such as "the", "and", "she", etc. will not distinguish a Democrat from a Republican. We call this process, pre-processing the data, that is, cleaning the data by removing elements in the texts that we believe are not useful for our analysis.
 
-After pre-processing the data, I am left with a dataset of 596 observations and 1034 words (or variables). You can take a look at the pre-processed data <a href="http://rpubs.com/sbikienga/334137" target="_blank">here</a>, or you can download it <a href="https://github.com/Salfo/States-Addresses/raw/master/data/SoSA_data_df.RData" target="_blank">here</a>. 
+After pre-processing the data, I am left with a dataset of 596 observations and 1034 words (or variables). You can take a look at the pre-processed data <a href="http://rpubs.com/sbikienga/334137" target="_blank">here</a>, or you can download it <a href="https://github.com/Salfo/States-Addresses/raw/master/data/SoSA_data_df.RData" target="_blank">here</a>. Stemming, that is stripping the words to their roots, is often done to avoid counting related words separately. For example, education, educational, educate are stemmed and become educ.
 
 # Example application of LDA
 
