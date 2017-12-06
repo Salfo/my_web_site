@@ -23,7 +23,7 @@ bibliography: reference2.bib
 <h1>Example Data</h1>
 <p>Let’s consider a dataset of U.S. governors’ State of the State Addresses (SoSA). In most states, the governor gives a speech, generally in January, in which he/she lays out his/her priorities for the next fiscal year. Part of the goal of the speech is to explain (or justify) the proposed budget, and hopefully convince the state stakeholders to support the proposed budget. A budget proposal usually involves a reallocation of the state resources, which implies cuts and increases in different lines of the state budget. I collected 596 speeches from governors of the 50 states, spanning from 2001 to 2013.</p>
 <p>It is customary in text analytics to delete words that we believe are not “discriminative”. For instance link words such as “the”, “and”, “she”, etc. will not distinguish a Democrat from a Republican. We call this process, pre-processing the data, that is, cleaning the data by removing elements in the texts that we believe are not useful for our analysis.</p>
-<p>After pre-processing the data, I am left with a dataset of 596 observations and 1034 words (or variables). You can take a look at the pre-processed data <a href="http://rpubs.com/sbikienga/334137" target="_blank">here</a>, or you can download it <a href="https://github.com/Salfo/States-Addresses/raw/master/data/SoSA_data_df.RData" target="_blank">here</a>.</p>
+<p>After pre-processing the data, I am left with a dataset of 596 observations and 1034 words (or variables). You can take a look at the pre-processed data <a href="http://rpubs.com/sbikienga/334137" target="_blank">here</a>, or you can download it <a href="https://github.com/Salfo/States-Addresses/raw/master/data/SoSA_data_df.RData" target="_blank">here</a>. Stemming, that is stripping the words to their roots, is often done to avoid counting related words separately. For example, education, educational, educate are stemmed and become educ.</p>
 </div>
 <div id="example-application-of-lda" class="section level1">
 <h1>Example application of LDA</h1>
@@ -141,17 +141,17 @@ df &lt;- data.frame(theta_matrix, state_vars)
 n_obs &lt;- sample(1:596, size = 10)
 sample_obs &lt;- df[n_obs,]
 sample_obs</code></pre>
-<pre><code>##                             Topic.1 Topic.2        state year party
-## Hawaii_2013_D_557.txt         0.505   0.495       Hawaii 2013     D
-## RhodeIsland_2010_R_388.txt    0.464   0.536  RhodeIsland 2010     R
-## Arizona_2003_D_26.txt         0.484   0.516      Arizona 2003     D
-## Montana_2011_D_272.txt        0.513   0.487      Montana 2011     D
-## NewYork_2005_R_325.txt        0.344   0.656      NewYork 2005     R
-## WestVirginia_2005_D_474.txt   0.461   0.539 WestVirginia 2005     D
-## Colorado_2006_R_59.txt        0.537   0.463     Colorado 2006     R
-## Vermont_2008_R_443.txt        0.321   0.679      Vermont 2008     R
-## Idaho_2010_R_128.txt          0.565   0.435        Idaho 2010     R
-## Vermont_2002_D_437.txt        0.463   0.537      Vermont 2002     D</code></pre>
+<pre><code>##                              Topic.1 Topic.2         state year party
+## Maryland_2005_R_206.txt        0.551   0.449      Maryland 2005     R
+## Maryland_2009_D_209.txt        0.422   0.578      Maryland 2009     D
+## Georgia_2001_D_97.txt          0.406   0.594       Georgia 2001     D
+## Tennessee_2002_R_411.txt       0.399   0.601     Tennessee 2002     R
+## Oregon_2009_D_370.txt          0.505   0.495        Oregon 2009     D
+## Connecticut_2004_R_68.txt      0.443   0.557   Connecticut 2004     R
+## NewHampshire_2005_D_293.txt    0.529   0.471  NewHampshire 2005     D
+## SouthCarolina_2008_R_396.txt   0.693   0.307 SouthCarolina 2008     R
+## Idaho_2003_R_121.txt           0.651   0.349         Idaho 2003     R
+## Ohio_2003_R_346.txt            0.567   0.433          Ohio 2003     R</code></pre>
 <p>Compute the topics’ means by party line.</p>
 <pre class="r"><code>library(dplyr)
 library(tidyr)
