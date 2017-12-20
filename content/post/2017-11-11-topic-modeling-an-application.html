@@ -141,17 +141,17 @@ df &lt;- data.frame(theta_matrix, state_vars)
 n_obs &lt;- sample(1:596, size = 10)
 sample_obs &lt;- df[n_obs,]
 sample_obs</code></pre>
-<pre><code>##                            Topic.1 Topic.2       state year party
-## NorthDakota_2007_R_341.txt   0.238   0.762 NorthDakota 2007     R
-## Illinois_2006_D_135.txt      0.387   0.613    Illinois 2006     D
-## Mississippi_2012_R_519.txt   0.472   0.528 Mississippi 2012     R
-## Alaska_2008_R_19.txt         0.509   0.491      Alaska 2008     R
-## Hawaii_2010_R_117.txt        0.534   0.466      Hawaii 2010     R
-## Delaware_2007_D_82.txt       0.479   0.521    Delaware 2007     D
-## Montana_2001_R_267.txt       0.454   0.546     Montana 2001     R
-## NewMexico_2002_R_311.txt     0.690   0.310   NewMexico 2002     R
-## Illinois_2011_D_140.txt      0.499   0.501    Illinois 2011     D
-## Wyoming_2007_D_496.txt       0.776   0.224     Wyoming 2007     D</code></pre>
+<pre><code>##                             Topic.1 Topic.2        state year party
+## NewHampshire_2012_D_522.txt   0.388   0.612 NewHampshire 2012     D
+## Washington_2007_D_465.txt     0.239   0.761   Washington 2007     D
+## SouthDakota_2007_R_405.txt    0.378   0.622  SouthDakota 2007     R
+## Illinois_2008_D_137.txt       0.465   0.535     Illinois 2008     D
+## Indiana_2005_R_145.txt        0.741   0.259      Indiana 2005     R
+## Texas_2009_R_423.txt          0.405   0.595        Texas 2009     R
+## Nebraska_2003_D_275.txt       0.759   0.241     Nebraska 2003     D
+## Indiana_2003_D_143.txt        0.361   0.639      Indiana 2003     D
+## RhodeIsland_2005_R_383.txt    0.424   0.576  RhodeIsland 2005     R
+## Utah_2012_R_540.txt           0.408   0.592         Utah 2012     R</code></pre>
 <p>Compute the topics’ means by party line.</p>
 <pre class="r"><code>library(dplyr)
 library(tidyr)

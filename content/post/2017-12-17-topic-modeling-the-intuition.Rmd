@@ -190,7 +190,7 @@ text(x = Z$Topic.1, y = Z$Topic.2, labels= 1:6, cex= 1)
 
 ### Uniqueness of the solution
 
-The solution is not unique, as you might have noticed (note the difference in Z and B from the illustrative example and the computed Z and B) eventhough $W$ remains the same. To see why, assume $T$ is an orthogonal matrix, that is, $T$ is such that $TT^t = I$. Then,
+The solution is not unique, as you might have noticed (note the difference in Z and B from the illustrative example and the computed Z and B) eventhough $W$ remains the same. To see why, assume $T$ is an orthonormal matrix, that is, $T$ is such that $TT^t = I$. Then,
 $W \simeq ZB = ZTT^tB = (ZT)(T^tB) = Z^*B^*$ where $Z^* = ZT$, and $B^* = T^tB$. Thus, ($Z$, $B$) and ($Z^*$, $B^*$) are both equally valid solutions. Therefore, the solution is not unique. This non uniqueness of the solution poses some challenges for inferential studies based on the reduced dimension.
 
 ### Interpreting the new variables
