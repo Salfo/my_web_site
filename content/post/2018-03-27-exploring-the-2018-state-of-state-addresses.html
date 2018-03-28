@@ -1,0 +1,219 @@
+---
+title: Exploring the 2018 State of State Addresses
+author: Salfo Bikienga
+date: '2018-03-27'
+slug: exploring-the-2018-state-of-state-addresses
+categories:
+  - Text Analytics
+tags:
+  - Text Analytics
+  - Web Scraping
+  - Exploratory Data Analysis
+---
+
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
+<script src="/rmarkdown-libs/datatables-binding/datatables.js"></script>
+<link href="/rmarkdown-libs/dt-core/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="/rmarkdown-libs/dt-core/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/dt-core/js/jquery.dataTables.min.js"></script>
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>In this post, I will scrape the 2018 State of the State Addresses (SoSAs), convert the speeches into a dataframe of words counts with the rows representing the speeches and the columns representing the words. This type of dataframe is known as <strong><em>document term matrix</em></strong> (dtm). I will also perform some exploratory analysis of the constructed dataset.</p>
+<p>Every year, at the beginning of the year, most U.S governors present their visions for their states in their SoSAs. The speech is meant, for the governor, to layout her vision for the state, and the means for achieving the vision. It is meant to present the governor legislative agenda and her proposed budget. It is arguably the most important speech of the of the year of the governor. Chiefly, the governor uses the speech to rally supports for her agenda. Thus, given its importance for understanding the state agenda, it may be useful to statistically explore the differences between governors in terms of their words choices. To do so, we need to scrape the data first.</p>
+</div>
+<div id="scraping-the-speeches" class="section level1">
+<h1>Scraping the speeches</h1>
+<p>The web is the primary source for accessing the SoSAs. When we are interested in a few texts, it is easy to locate the links of the speechs, then copy the texts. However, copying and pasting becomes tedious when we need to collect dozens of speeches. Moreover, some of the text are in pdf format, and copying pdf files is sometimes not a trivial task. Therefore, we might find it more efficient to write a program that will grab the text, for us, from the web. This task is generally referred as <strong><em>web scraping</em></strong>.</p>
+<div id="getting-the-web-links-of-the-speeches" class="section level2">
+<h2>Getting the web links of the speeches</h2>
+<p>To scrape the data (or the texts), we first need to get the web links of the texts. Luckily, the web links of the 2018 SoSAs can be found <a href="https://www.multistate.us/2018-state-of-the-state-addresses-0" target="_blank">here</a>. The code below scrapes the table of the web links.</p>
+<pre class="r"><code># required packages
+library(pdftools) # needed to download and extract text from .pdf files
+library(rvest) # needed to download and extract text from html files
+library(stringr) # needed for string manipulation
+library(dplyr) # needed for dataframe manipulation
+library(tm) # needed for text mining
+
+
+# get the table of governors and the links of the speeches
+# sp stands for speeches
+sp_url &lt;- &quot;https://www.multistate.us/2018-state-of-the-state-addresses-0&quot;
+sp_webpage &lt;- read_html(sp_url)
+sp_tabl &lt;- sp_webpage %&gt;%
+  html_nodes(&quot;table&quot;) %&gt;%
+  .[[1]] %&gt;%
+  html_table(header = 1)
+
+Party &lt;- c(&quot;R&quot;, &quot;I&quot;, &quot;R&quot;, &quot;R&quot;, &quot;D&quot;, &quot;D&quot;, &quot;D&quot;, &quot;D&quot;, &quot;R&quot;, &quot;R&quot;,
+           &quot;D&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;D&quot;, &quot;R&quot;, &quot;R&quot;, 
+           &quot;R&quot;, &quot;R&quot;, &quot;D&quot;, &quot;R&quot;, &quot;R&quot;, &quot;D&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, 
+           &quot;R&quot;, &quot;D&quot;, &quot;D&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;D&quot;, &quot;D&quot;, &quot;D&quot;, &quot;R&quot;, 
+           &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;, &quot;D&quot;, &quot;D&quot;, &quot;R&quot;, &quot;R&quot;, &quot;R&quot;)
+
+sp_tabl$Party &lt;- Party
+
+sp_tabl &lt;- sp_tabl %&gt;%
+  filter(Date != &#39;None&#39;)
+links &lt;- sp_webpage %&gt;%
+  html_nodes(xpath = &#39;//table/..//a&#39;) %&gt;%
+  html_attr(&#39;href&#39;)
+sp_tabl$Links &lt;- links
+sp_tabl &lt;- sp_tabl %&gt;%
+  filter(State != &#39;Texas&#39;) # Texas’s file is not a speech. So remove it.</code></pre>
+<p>Below is the table of the web links and some metadata of the speeches</p>
+<pre class="r"><code>library(DT) # needed to output interactive tables 
+datatable(sp_tabl, class = &#39;cell-border stripe&#39;, options = list(
+  pageLength = 5, autoWidth = TRUE, caption = &#39;Table of the web links&#39;
+))</code></pre>
+<div id="htmlwidget-1" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46"],["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Nebraska","New Hampshire","New Jersey","New Mexico","New York","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"],["Kay Ivey","Bill Walker","Doug Ducey","Asa Hutchinson","Jerry Brown","John Hickenlooper","Dan Malloy","John Carney","Rick Scott","Nathan Deal","David Ige","Butch Otter","Bruce Rauner","Eric Holcomb","Kim Reynolds","Sam Brownback","Matt Bevin","John Bel Edwards","Paul LePage","Larry Hogan","Charlie Baker","Rick Snyder","Mark Dayton","Phil Byant","Eric Greitens","Pete Ricketts","Chris Sununu","Chris Christie","Susana Martinez","Andrew Cuomo","Doug Burgum","John Kasich","Mary Fallin","Kate Brown","Tom Wolf","Gina Raimondo","Henry McMaster","Dennis Daugaard","Bill Haslam","Gary Herbert","Phil Scott","Terry McAuliffe","Jay Inslee","Jim Justice","Scott Walker","Matt Mead"],["1/9/18","1/18/18","1/8/18","2/12/18","1/25/18","1/11/18","2/7/18","1/18/18","1/9/18","1/11/18","1/22/18","1/8/18","1/31/18","1/9/18","1/9/18","1/9/18","1/16/18","3/12/18","2/13/18","1/31/18","1/23/18","1/23/18","3/14/18","1/9/18","1/10/18","1/10/18","2/15/18","1/9/18","1/16/18","1/3/18","1/23/18","3/6/18","2/5/18","2/5/18","2/6/18","1/16/18","1/24/18","1/9/18","1/29/18","1/24/18","1/4/18","1/10/18","1/9/18","1/10/18","1/24/18","2/12/18"],["2018 State of the State Address","The State of the State Address","Arizona State of the State 2018","State of the State","Governor Brown Delivers 2018 State of the State Address: \"California is Setting the Pace for America\"","Governor Hickenlooper delivers final State of the State speech","Governor Dannel P. Malloy's 2018 State of the State Address","Governor Carney Delivers State of the State Address to Joint Session of the General Assembly","Governor Rick Scott's 2018 State of the State Address","Deal's State of the State address: 'Orchards of Opportunity'","Governor David Y. Ige's 2018 State of the State Address: \"Building a Hawai'i for Our Children\"","State of the State and Budget Address","Transcript: Gov. Rauner's 2018 State of the State Address","2018 State of the State Address","Gov. Reynolds delivers Condition of the State address","Governor Brownback's State of the State address","Transcript not available; Governor's press release: \"Gov. Bevin Delivers Plan to Continue Building Solid Fiscal Foundation for the Commonwealth\"","Gov. John Bel Edwards State of the State Address","State of the State","Full text: Gov. Hogan delivers Maryland State of the State","Governor Baker Delivers Third State of the Commonwealth Address","2018 Michigan State of the State Transcript","Governor Mark Dayton State of the State Address","2018 State of the State Address","Governor Eric Greitens 2018 State of the State Address","Governor Ricketts' State of the State Address","Transcript: Gov. Chris Sununu delivers 2018 State of the State address","Governor Crhis Christie's 2018 State of the State Address","Governor Susana Martinez Delivers State of the State Address","Transcript: Governor Cuomo Outlines 2018 Agenda","State of the State transcript","Text of Ohio Gov. John Kasich's State of the State Address","Governor Mary Fallin State of the State","State of the State 2018","Remarks by Governor Wolf at 2018 Budget Address","Governor Gina M. Raimondo's 2018 State of the State Address","2018 State of the State","State of the State Address of Governor Dennis Daugaard","2018 State of the State Address","2018 State of the State Address","Governor Phil Scott - 2018 State of the State Address","State of the Commonwealth Address","2018 State of the State","2018 West Virginia State of the State Address","2018 State of the State Address","State of the State Address"],["R","I","R","R","D","D","D","D","R","R","D","R","R","R","R","R","R","D","R","R","R","R","D","R","R","R","R","R","R","D","R","R","R","D","D","D","R","R","R","R","R","D","D","R","R","R"],["https://governor.alabama.gov/remarks-speeches/2018-state-of-the-state-address/","https://gov.alaska.gov/wp-content/uploads/sites/5/2018-State-of-the-State.pdf","https://azgovernor.gov/governor/news/2018/01/arizona-state-state-2018","https://governor.arkansas.gov/speeches/detail/state-of-the-state","https://www.gov.ca.gov/news.php?id=20150","https://www.colorado.gov/governor/sites/default/files/2018_state_of_the_state_speech.pdf","http://portal.ct.gov/Office-of-the-Governor/Press-Room/Speeches/Governor-Dannel-P-Malloys-2018-State-of-the-State-Address","https://medium.com/@JohnCarneyDE/governor-carneys-2018-state-of-the-state-address-e5ea7bb1e287","https://www.flgov.com/2018/01/09/governor-rick-scotts-2018-state-of-the-state-address/","https://gov.georgia.gov/press-releases/2018-01-11/deal%E2%80%99s-state-state-address-%E2%80%98orchards-opportunity%E2%80%99","https://governor.hawaii.gov/wp-content/uploads/2018/01/2018-Gov-Ige-STATE-OF-THE-STATE.pdf","https://gov.idaho.gov/mediacenter/speeches/sp_2018/State%20of%20the%20State%202018.pdf","https://chicago.suntimes.com/politics/illinois-state-of-the-state-bruce-rauner-speech-script/","http://www.in.gov/gov/2972.htm","https://governor.iowa.gov/2018/01/gov-reynolds-delivers-condition-of-the-state-address","https://governor.kansas.gov/governors-state-of-the-state-address/","http://kentucky.gov/Pages/Activity-stream.aspx?n=KentuckyGovernor&amp;prId=575","http://www.theadvocate.com/baton_rouge/news/politics/article_578c49c4-2621-11e8-b6f1-87df535c670f.html","http://www.wmtw.com/article/read-gov-paul-lepages-final-state-of-the-state-address/17806062","http://www.baltimoresun.com/news/maryland/politics/bs-md-state-of-state-20180131-story.html","https://www.mass.gov/news/governor-baker-delivers-third-state-of-the-commonwealth-address","http://www.michigan.gov/documents/snyder/2018_Michigan_State_of_the_State_Transcript_612009_7.pdf","https://mn.gov/governor/blog/?id=330480","https://www.clarionledger.com/story/news/politics/2018/01/09/text-bryants-state-state-address/1018569001/","https://governor.mo.gov/news/archive/governor-eric-greitens-2018-state-state","https://governor.nebraska.gov/press/governor-ricketts-state-state-address-1","http://www.unionleader.com/state-government/transcript-gov-chris-sununu-delivers-2018-state-of-the-state-address-20180215","http://www.nj.com/politics/index.ssf/2018/01/read_christies_final_state_of_the_state_address.html","http://www.governor.state.nm.us/uploads/PressRelease/191a415014634aa89604e0b4790e4768/Governor_Susana_Martinez_Delivers_State_of_the_State_Address_5.pdf","https://www.governor.ny.gov/news/video-audio-rush-transcript-governor-cuomo-unveils-14th-proposal-2018-state-state-fast-track","https://www.governor.nd.gov/sites/governor/files/documents/State%20of%20the%20State%20transcript%20clean.pdf","https://www.usnews.com/news/best-states/massachusetts/articles/2018-03-07/text-of-ohio-gov-john-kasichs-state-of-the-state-address","https://www.ok.gov/governor/documents/2-5-18%20FINAL%20Governor%20Mary%20Fallin%20State%20of%20the%20State.pdf","http://www.oregon.gov/gov/media/Pages/speeches/State-of-the-State-2018.aspx","https://www.governor.pa.gov/remarks-by-governor-wolf-at-2018-budget-address/","https://medium.com/@GovRaimondo/governor-gina-m-raimondos-2018-state-of-the-state-address-5f7a3751e6fc","http://governor.sc.gov/Newsroom/Pages/2018StateoftheState.aspx","https://www.dropbox.com/s/6jffmfmidh22fod/2018-01-09%20State%20of%20the%20State%20Transcript.docx?dl=0","https://www.tn.gov/content/dam/tn/governorsoffice-documents/governorsoffice-documents/sots-2018/2018_Haslam_SOTS_address.pdf","https://governorblog.utah.gov/2018/01/governor-herberts-2018-state-of-the-state-address/","http://governor.vermont.gov/sites/scott/files/documents/Governor%20Phil%20Scott%20-%202018%20State%20of%20the%20State%20Address.pdf","http://wtkr.com/2018/01/10/governor-mcauliffe-to-deliver-final-state-of-the-commonwealth-address/","https://www.governor.wa.gov/news-media/news-media/speeches/2018-state-state","http://governor.wv.gov/News/press-releases/2018/Pages/2018-West-Virginia-State-of-the-State-Address.aspx","https://walker.wi.gov/sites/default/files/speeches/transcript/Wisconsin_2018_SOTS_Address.pdf","https://drive.google.com/file/d/1C6TFp2coeIWsxOEEe-kfOH9DNlH2Juh1/view"]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>State<\/th>\n      <th>Governor<\/th>\n      <th>Date<\/th>\n      <th>Link to Text of Speech<\/th>\n      <th>Party<\/th>\n      <th>Links<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"caption":"Table of the web links","order":[],"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}],"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="downloading-and-extracting-the-texts" class="section level2">
+<h2>Downloading and extracting the texts</h2>
+<p><code>rvest</code> is a popular <code>R</code> package for scraping html files. However, some of the files we are scraping are in pdf format. Therefore, we will have to supplement <code>rvest</code> with the <code>pdftools</code>’ package to scrape both the .pdf and .html files. To do so, we write a loop that checks whether the file to download is a .pdf or not. If the file is a pdf, then the <code>pdftools</code> functions are used to download the file and extract its text. If the file is not a pdf, then we use <code>rvest</code>’s functions to download the file and extract its text. Unfortunately, some of the links are dead, others do not link to .pdf nor .html files. So, we use <code>tryCatch</code> to prevent the loop from crashing, just because the code cannot download a file. The following code does the trick.</p>
+<pre class="r"><code># Download the files, then extract the text data
+
+sp_number = 0
+missing &lt;- NULL
+for (url in sp_tabl$Links) {
+  sp_number = sp_number + 1
+  has_a_pdf &lt;- str_detect(string = url, pattern = &#39;.pdf&#39;)
+  if(has_a_pdf){ # scrape text from .pdf files
+    text &lt;- tryCatch(pdf_text(url), 
+                     error = function(e) e)
+    if(inherits(text, &quot;error&quot;)){
+      missing &lt;- c(missing, sp_number) 
+      next
+    }
+    text &lt;- paste(unlist(strsplit(text, &quot;\n&quot;)), collapse = &quot;&quot;)
+    path &lt;- paste0(&#39;speeches/&#39;, sp_tabl$State[sp_number], &quot;.txt&quot;)
+    fileConn&lt;-file(path)
+    writeLines(text, fileConn)
+    close(fileConn)
+  } else{  # scrape text from html files
+    text &lt;- tryCatch(read_html(url), # to prevent errors from crashing the loop
+                     error = function(e) e)
+    if(inherits(text, &quot;error&quot;)){
+      missing &lt;- c(missing, sp_number) 
+      next
+    }
+    text &lt;- text %&gt;% 
+      html_nodes(xpath = &#39;//p&#39;) %&gt;%
+      html_text()
+    path &lt;- paste0(&#39;speeches/&#39;, sp_tabl$State[sp_number], &quot;.txt&quot;)
+    fileConn&lt;-file(path)
+    writeLines(text, fileConn)
+    close(fileConn)
+  }
+  Sys.sleep(5) # slows down the files request. 
+}</code></pre>
+<p>The code above downloads the files, extracts the text, and saves the files in the directory provided. I saved the texts in a folder named <code>speeches</code>. A quick check of the .txt files in the speeches directory shows that a couple of files seems to be empty. The emptiness are due for several possible reasons. (1) some files are not .pdf, nor .html (<a href="https://www.dropbox.com/s/6jffmfmidh22fod/2018-01-09%20State%20of%20the%20State%20Transcript.docx?dl=0" target="_blank">Utah</a>). The file may be a .pdf but the link does not countain a pdf so it fails to be treated as pdf (<a href="https://drive.google.com/file/d/1C6TFp2coeIWsxOEEe-kfOH9DNlH2Juh1/view" target="_blank">Wyoming</a>). Others have unusal html tags for the text (<a href="https://governor.wv.gov/News/press-releases/2018/Pages/2018-West-Virginia-State-of-the-State-Address.aspx" target="_blank">West Virginia</a>). In sum, inconsistency is a problem when scraping data from several sources. And, in practice, we have to iterate the process to detect the possible inconsistencies and adjust the code accordingly. For further notes on web scraping with <code>R</code>, see <a href="https://ropensci.org/blog/2016/03/01/pdftools-and-jeroen/" target="_blank">this</a>, <a href="https://www.analyticsvidhya.com/blog/2017/03/beginners-guide-on-web-scraping-in-r-using-rvest-with-hands-on-knowledge/" target="_blank">this</a>, or <a href="http://www.r-datacollection.com/" target="_blank">this</a>.</p>
+</div>
+</div>
+<div id="transforming-the-text-documents-into-a-matrix-of-words-count-per-document" class="section level1">
+<h1>Transforming the text documents into a matrix of words count per document</h1>
+<p>The <code>tm</code> package is one of the most popular <code>R</code> packages for text mining. Here, the goal is to convert the text documents into a matrix of words counts, where each row represents a speech and each column represents a word; a cell represents the number of times a particular word were used in a particular speech. Also, it is customary to pre-process the data before analysis; that is, depending on the type of analysis, some words may be considered useless, and removed from the dataset. Combining certains words may be warranted because they convey a single idea (for instance, education, educational covey the same idea), so we stem the words to avoid such words being considered as two separate words. For more on pre-processing, see page 4 of <a href="https://cran.r-project.org/web/packages/tm/vignettes/tm.pdf" target="_blank">this</a>. It should be noted that for some analyses, the small words (or transition words) may be the most important words (for example, in <a href="http://www.pbs.org/opb/historydetectives/blog/how-we-solved-it-stylometric-analysis/" target="_blank">stylometrics</a>, or authorship attribution).</p>
+<pre class="r"><code># Convert text data into a table of words counts per document
+
+
+MyDocuments &lt;- DirSource(&quot;speeches/&quot;) #path for documents
+MyCorpus &lt;- Corpus(MyDocuments, readerControl=list(reader=readPlain)) #load in documents
+
+f &lt;- content_transformer(function(x, pattern) gsub(pattern, &quot; &quot;, x))
+MyCorpus &lt;- tm_map(MyCorpus, f, &quot;[^[:alnum:]]&quot;) # Remove anything that is not alphanumeric
+MyCorpus &lt;- tm_map(MyCorpus, content_transformer(tolower))
+MyCorpus &lt;- tm_map(MyCorpus, removeWords, stopwords(&#39;english&#39;))
+MyCorpus &lt;- tm_map(MyCorpus, stripWhitespace)
+MyCorpus &lt;- tm_map(MyCorpus, removePunctuation)
+MyCorpus &lt;- tm_map(MyCorpus, removeNumbers)
+
+
+dtm &lt;- DocumentTermMatrix(MyCorpus,
+                          control = list(wordLengths = c(4, Inf), stemming = TRUE))
+Sp_dtm &lt;- dtm %&gt;% removeSparseTerms(sparse=0.75) # Drop words that are present in less than 25% of the documents
+dim(Sp_dtm) # inspect the dimension of the data set</code></pre>
+<pre><code>## [1]  46 905</code></pre>
+<pre class="r"><code>Sp_dtm_df &lt;- as.data.frame(as.matrix(Sp_dtm)) # Convert table into a dataframe for ease of data manipulation
+row_sums &lt;- rowSums(Sp_dtm_df)
+Sp_dtm_df$Party &lt;- sp_tabl$Party
+Sp_dtm_df$row_sums &lt;- row_sums
+
+Sp_dtm_df &lt;- Sp_dtm_df %&gt;%
+  subset(row_sums &gt; 100) # to remove empty (or very short) documents
+Sp_dtm_df$row_sums = NULL</code></pre>
+<p>Overall, we get a dataframe of 42 rows (i.e. documents) and 906 columns (i.e. words); with the last column being the party affiliation of the governor. This dataframe can now be used to perform statiscal analyses.</p>
+</div>
+<div id="performing-statistical-analysis-of-the-words-counts" class="section level1">
+<h1>Performing statistical analysis of the words counts</h1>
+<div id="barplots-of-a-selected-list-of-words" class="section level2">
+<h2>Barplots of a selected list of words</h2>
+<p>Barplots are useful for exploring, graphically, count data. Below, we explore the top 20 most used words in all the speeches.</p>
+<pre class="r"><code>library(ggplot2) # needed for graphs
+words_freq &lt;- colSums(Sp_dtm_df[ ,-length(Sp_dtm_df)])
+words_freq &lt;- data.frame(words = names(words_freq),
+                         freq = unname(words_freq))
+words_freq &lt;- words_freq[order(words_freq$freq, decreasing = TRUE),]
+
+
+p &lt;- ggplot(data = words_freq[1:20, ], aes(x=words, y=freq)) +
+  geom_bar(stat=&quot;identity&quot;, fill=&quot;steelblue&quot;)
+p + coord_flip()</code></pre>
+<p><img src="/post/2018-03-27-exploring-the-2018-state-of-state-addresses_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>From the barplot, the most used words in the speeches are state, year, and will. Among the top twenty words are: School, Education, Business, and work.</p>
+<p>Let’s select a few words, and compare the words relative frequencies by party affiliation. The words selected are: Education, Health, Budget, Economy, and Business. The stemming function did not do a good job. It was meant to convert words such as economy, economical into their root words. But, that did not happen. We will do it manually.</p>
+<pre class="r"><code>Sp_dtm_df$econom &lt;- Sp_dtm_df$econom + Sp_dtm_df$economi
+Sp_dtm_df$economi &lt;- NULL
+Sp_dtm_df$health &lt;- Sp_dtm_df$health + Sp_dtm_df$healthi + Sp_dtm_df$healthcar
+Sp_dtm_df$healthi &lt;- NULL
+Sp_dtm_df$healthcar &lt;- NULL</code></pre>
+<p>Now, let’s select the words of interest, and explore them with a barplot.</p>
+<pre class="r"><code>selected_words &lt;- Sp_dtm_df[, c(&quot;budget&quot;, &quot;busi&quot;, &quot;econom&quot;, &quot;educ&quot;, &quot;health&quot;, &quot;Party&quot;)]
+
+selected_words_D &lt;- colSums(selected_words[selected_words$Party == &quot;D&quot; ,-length(selected_words)])
+selected_words_D &lt;- data.frame(words = names(selected_words_D),
+                         freq = unname(selected_words_D)/sum(unname(selected_words_D)))
+selected_words_D$party &lt;- rep(&quot;D&quot;, 5)
+  
+selected_words_R &lt;- colSums(selected_words[selected_words$Party == &quot;R&quot; ,-length(selected_words)])
+selected_words_R &lt;- data.frame(words = names(selected_words_R),
+                         freq = unname(selected_words_R)/sum(unname(selected_words_R)))
+selected_words_R$party &lt;- rep(&quot;R&quot;, 5)
+
+sel_word_D_R &lt;- rbind(selected_words_D, selected_words_R)
+
+p_DR &lt;- ggplot(data = sel_word_D_R, aes(x=words, y=freq, fill = party)) +
+  geom_bar(stat=&quot;identity&quot;, position=position_dodge())
+p_DR + scale_fill_manual(values = c(&#39;blue&#39;,&#39;red&#39;)) + 
+  coord_flip()</code></pre>
+<p><img src="/post/2018-03-27-exploring-the-2018-state-of-state-addresses_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>The barplot shows that, relatively, Democrats have used the words health, economy, and business more often than Republicans. The Republicans have used the words education and budget more often than the Democrats.</p>
+<p>An alternative way to look at the words frequencies is to use a wordcloud. We will do so first, for all governors, then by party affiliation. Before then, we remove the words state, will, and year from the data. I am assuming that they are not important since they are so common in all speeches.</p>
+<pre class="r"><code>words_freq &lt;- words_freq[words_freq$freq &lt;= 900, ]
+# or
+Sp_dtm_df = subset(Sp_dtm_df, select = - c(state, will, year))</code></pre>
+<pre class="r"><code>library(&quot;wordcloud&quot;)
+library(&quot;RColorBrewer&quot;)
+set.seed(4444) # needed to reproduce the exact same wordcloud
+wordcloud(words = words_freq$words, freq = words_freq$freq, min.freq = 1,
+          max.words=350, random.order=FALSE, rot.per=0.35, 
+          colors=brewer.pal(8, &quot;Dark2&quot;))</code></pre>
+<p><img src="/post/2018-03-27-exploring-the-2018-state-of-state-addresses_files/figure-html/unnamed-chunk-9-1.png" width="768" /></p>
+<p>The wordcloud above indicates that people, education, health, business, family, budget are all prominent words in the speeches. Let’s look at the wordcloud by party affiliation (Democrats vs. Republicans).</p>
+<pre class="r"><code>dem_freq &lt;- colSums(Sp_dtm_df[Sp_dtm_df$Party == &quot;D&quot;,-length(Sp_dtm_df)])
+rep_freq &lt;- colSums(Sp_dtm_df[Sp_dtm_df$Party == &quot;R&quot;,-length(Sp_dtm_df)])
+comp_data &lt;- data.frame(Democrats = unname(dem_freq)/sum(unname(dem_freq)),
+                        Republicans = unname(rep_freq)/sum(unname(rep_freq)))
+row.names(comp_data) &lt;- names(dem_freq)
+#comp_data &lt;- round(comp_data*1000, 0)
+comparison.cloud(comp_data,max.words=250,random.order=FALSE, colors = c(&quot;blue&quot;, &quot;red&quot;))</code></pre>
+<p><img src="/post/2018-03-27-exploring-the-2018-state-of-state-addresses_files/figure-html/unnamed-chunk-10-1.png" width="960" /></p>
+<p>Clearly, Democrats and Republicans’ governors focused on different words during their 2018 SoSAs. Paradoxically, while Democrates used words related to the economy (fair, build, business, work, train) more often, Republicans used more words related to the state (govern, people, citizen, service, reform). There are much more differences we can highlight, based on this wordcloud. What other differences can you highlight? I leave that to you.</p>
+</div>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>This post has presented the steps from collecting text data from the web to exploring the data. Given that more data are found online these days, web scraping is certainly a valuable skill for data analytics. Converting the text data into a matrix of words counts allows us to perform traditional data exploration. Additional exploratory tools (such as wordcloud) designed for the particular case of text data exists. In this post, we went through introductory level tools of text analytics. Text analytics is an exiting branch of statistics (or machine learning if you will). In my opinion, text anlytics is probably one of the most effective ways to learn data analysis, since nothing in text analytics is trivial, and exploratory analysis (and therefore human judgement) is paramount. This post is getting too long. Let’s leave it here. Feel free to leave your comments below!</p>
+</div>

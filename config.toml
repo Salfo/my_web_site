@@ -170,12 +170,12 @@ defaultContentLanguageInSubdir = false
 [[menu.main]]
   name = "Publications"
   url = "#publications"
-  weight = 2
+  weight = 3
 
 [[menu.main]]
-  name = "Posts"
+  name = "Blog"
   url = "#posts"
-  weight = 3
+  weight = 2
   
 
 [[menu.main]]
