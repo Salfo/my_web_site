@@ -1,5 +1,5 @@
 ---
-title: Exploring the 2018 State of State Addresses
+title: Exploring the 2018 U.S Governors' State of State Addresses
 author: Salfo Bikienga
 date: '2018-03-27'
 slug: exploring-the-2018-state-of-state-addresses
@@ -14,11 +14,11 @@ tags:
 # Introduction
 In this post, I will scrape the 2018 State of the State Addresses (SoSAs), convert the speeches into a dataframe of words counts with the rows representing the speeches and the columns representing the words. This type of dataframe is known as ***document term matrix*** (dtm). I will also perform some exploratory analysis of the constructed dataset.
 
-Every year, at the beginning of the year, most U.S governors present their visions for their states in their SoSAs. The speech is meant, for the governor, to layout her vision for the state, and the means for achieving the vision. It is meant to present the governor legislative agenda and her proposed budget. It is arguably the most important speech of the of the year of the governor. Chiefly, the governor uses the speech to rally supports for her agenda. Thus, given its importance for understanding the state agenda, it may be useful to statistically explore the differences between governors in terms of their words choices. To do so, we need to scrape the data first.
+Every year, at the beginning of the year, most U.S governors present their visions for their states in their SoSAs. The speech is meant, for the governor, to layout her vision for the state, and the means for achieving the vision. It is meant to present the governor' legislative agenda and her proposed budget. It is arguably the governor most important speech of the of the year. Chiefly, the governor uses the speech to rally supports for her agenda. Thus, given its importance for understanding the state agenda, it may be useful to statistically explore the differences between governors in terms of their words choices. To do so, we need to scrape the data first.
 
 # Scraping the speeches
 
-The web is the primary source for accessing the SoSAs. When we are interested in a few texts, it is easy to locate the links of the speechs, then copy the texts. However, copying and pasting becomes tedious when we need to collect dozens of speeches. Moreover, some of the text are in pdf format, and copying pdf files is sometimes not a trivial task. Therefore, we might find it more efficient to write a program that will grab the text, for us, from the web. This task is generally referred as ***web scraping***.
+The web is the primary source for accessing the SoSAs. When we are interested in a few texts, it is easy to locate the links of the speeches, then copy the texts. However, copying and pasting becomes tedious when we need to collect dozens of speeches. Moreover, some of the text are in pdf format, and copying pdf files is sometimes not a trivial task. Therefore, we might find it more efficient to write a program that will grab the texts, for us, from the web. This task is generally referred as ***web scraping***.
 
 ## Getting the web links of the speeches
 
@@ -73,14 +73,14 @@ datatable(sp_tabl, class = 'cell-border stripe', options = list(
 ```{r, warning=FALSE, message=FALSE, eval=TRUE, echo=TRUE}
 library(knitr)
 library(kableExtra)
-kable(head(sp_tabl), "html") %>%
+kable(head(sp_tabl[, -4]), "html") %>%
   kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
 
 ## Downloading and extracting the texts
 
-`rvest` is a popular `R` package for scraping html files. However, some of the files we are scraping are in pdf format. Therefore, we will have to supplement `rvest` with the `pdftools`' package to scrape both the .pdf and .html files. To do so, we write a loop that checks whether the file to download is a .pdf or not. If the file is a pdf, then the `pdftools` functions are used to download the file and extract its text. If the file is not a pdf, then we use `rvest`'s functions to download the file and extract its text. Unfortunately, some of the links are dead, others do not link to .pdf nor .html files. So, we use `tryCatch` to prevent the loop from crashing, just because the code cannot download a file. The following code does the trick.
+`rvest` is a popular `R` package for scraping html files. However, some of the files we are scraping are in pdf format. Therefore, we will have to supplement `rvest` with the `pdftools` package to scrape both the .pdf and .html files. To do so, we write a loop that checks whether the file to download is a .pdf or not. If the file is a pdf, then the `pdftools`' functions are used to download the file and extract its text. If the file is not a pdf, then we use `rvest`'s functions to download the file and extract its text. Unfortunately, some of the links are dead, others do not link to .pdf nor .html files. So, we use `tryCatch` to prevent the loop from crashing, just because the code cannot download a file. The following code does the trick.
 
 ```{r, eval=FALSE, warning=FALSE, message=FALSE}
 # Download the files, then extract the text data
@@ -122,11 +122,11 @@ for (url in sp_tabl$Links) {
 
 ```
 
-The code above downloads the files, extracts the text, and saves the files in the directory provided. I saved the texts in a folder named `speeches`. A quick check of the .txt files in the speeches directory shows that a couple of files seems to be empty. The emptiness are due for several possible reasons. (1) some files are not .pdf, nor .html (<a href="https://www.dropbox.com/s/6jffmfmidh22fod/2018-01-09%20State%20of%20the%20State%20Transcript.docx?dl=0" target="_blank">Utah</a>). The file may be a .pdf but the link does not countain a pdf so it fails to be treated as pdf (<a href="https://drive.google.com/file/d/1C6TFp2coeIWsxOEEe-kfOH9DNlH2Juh1/view" target="_blank">Wyoming</a>). Others have unusal html tags for the text (<a href="https://governor.wv.gov/News/press-releases/2018/Pages/2018-West-Virginia-State-of-the-State-Address.aspx" target="_blank">West Virginia</a>). In sum, inconsistency is a problem when scraping data from several sources. And, in practice, we have to iterate the process to detect the possible inconsistencies and adjust the code accordingly. For further notes on web scraping with `R`, see <a href="https://ropensci.org/blog/2016/03/01/pdftools-and-jeroen/" target="_blank">this</a>, <a href="https://www.analyticsvidhya.com/blog/2017/03/beginners-guide-on-web-scraping-in-r-using-rvest-with-hands-on-knowledge/" target="_blank">this</a>, or <a href="http://www.r-datacollection.com/" target="_blank">this</a>.
+The code above downloads the files, extracts the text, and saves the files in the directory provided. I saved the texts in a folder named `speeches`. A quick check of the .txt files in the `speeches` directory shows that a couple of files are empty. That may be due to several possible reasons. (1) some files are not .pdf, nor .html (<a href="https://www.dropbox.com/s/6jffmfmidh22fod/2018-01-09%20State%20of%20the%20State%20Transcript.docx?dl=0" target="_blank">Utah</a>). (2) A file may be a .pdf but the link does not contain a pdf so it fails to be treated as pdf (<a href="https://drive.google.com/file/d/1C6TFp2coeIWsxOEEe-kfOH9DNlH2Juh1/view" target="_blank">Wyoming</a>). (3) Others files have unusual html tags for the text (<a href="https://governor.wv.gov/News/press-releases/2018/Pages/2018-West-Virginia-State-of-the-State-Address.aspx" target="_blank">West Virginia</a>). In sum, inconsistency is a problem when scraping data from several sources. And, in practice, we have to iterate the process to detect the possible inconsistencies and adjust the code accordingly. For further notes on web scraping with `R`, see <a href="https://ropensci.org/blog/2016/03/01/pdftools-and-jeroen/" target="_blank">this</a>, <a href="https://www.analyticsvidhya.com/blog/2017/03/beginners-guide-on-web-scraping-in-r-using-rvest-with-hands-on-knowledge/" target="_blank">this</a>, or <a href="http://www.r-datacollection.com/" target="_blank">this</a>.
 
 # Transforming the text documents into a matrix of words count per document
 
-The `tm` package is one of the most popular `R` packages for text mining. Here, the goal is to convert the text documents into a matrix of words counts, where each row represents a speech and each column represents a word; a cell represents the number of times a particular word were used in a particular speech. Also, it is customary to pre-process the data before analysis; that is, depending on the type of analysis, some words may be considered useless, and removed from the dataset. Combining certains words may be warranted because they convey a single idea (for instance, education, educational covey the same idea), so we stem the words to avoid such words being considered as two separate words. For more on pre-processing, see page 4 of <a href="https://cran.r-project.org/web/packages/tm/vignettes/tm.pdf" target="_blank">this</a>. It should be noted that for some analyses, the small words (or transition words) may be the most important words (for example, in  <a href="http://www.pbs.org/opb/historydetectives/blog/how-we-solved-it-stylometric-analysis/" target="_blank">stylometrics</a>, or authorship attribution).
+The `tm` package is one of the most popular `R` packages for text mining. Here, the goal is to convert the text documents into a matrix of words counts, where each row represents a speech and each column represents a word; a cell represents the number of times a particular word was used in a particular speech. Also, it is customary to pre-process the data before analysis; that is, depending on the type of analysis, some words may be considered useless, and removed from the dataset. Combining certains words may be warranted because they convey a single idea (for instance, education, educational covey the same idea), so we stem the words to avoid such words being considered as two separate words. For more on pre-processing, see page 4 of <a href="https://cran.r-project.org/web/packages/tm/vignettes/tm.pdf" target="_blank">thistutorial</a>. It should be noted that for some analyses, the small words (or transition words) may be the most important words (for example, in  <a href="http://www.pbs.org/opb/historydetectives/blog/how-we-solved-it-stylometric-analysis/" target="_blank">stylometrics</a>, or authorship attribution).
 
 ```{r, warning=FALSE, message=FALSE}
 # Convert text data into a table of words counts per document
@@ -147,7 +147,7 @@ MyCorpus <- tm_map(MyCorpus, removeNumbers)
 dtm <- DocumentTermMatrix(MyCorpus,
                           control = list(wordLengths = c(4, Inf), stemming = TRUE))
 Sp_dtm <- dtm %>% removeSparseTerms(sparse=0.75) # Drop words that are present in less than 25% of the documents
-dim(Sp_dtm) # inspect the dimension of the data set
+#dim(Sp_dtm) # inspect the dimension of the data set
 Sp_dtm_df <- as.data.frame(as.matrix(Sp_dtm)) # Convert table into a dataframe for ease of data manipulation
 row_sums <- rowSums(Sp_dtm_df)
 Sp_dtm_df$Party <- sp_tabl$Party
@@ -158,7 +158,7 @@ Sp_dtm_df <- Sp_dtm_df %>%
 Sp_dtm_df$row_sums = NULL
 ```
 
-Overall, we get a dataframe of `r dim(Sp_dtm_df)[1]` rows (i.e. documents) and `r dim(Sp_dtm_df)[2]` columns (i.e. words); with the last column being the party affiliation of the governor. This dataframe can now be used to perform statiscal analyses.
+Overall, we get a dataframe of `r dim(Sp_dtm_df)[1]` rows (i.e. documents) and `r dim(Sp_dtm_df)[2]` columns (i.e. words); with the last column being the party affiliation of the governor. This dataframe can now be used to perform statistical analyses.
 
 # Performing statistical analysis of the words counts
 
@@ -181,7 +181,7 @@ p + coord_flip()
 
 From the barplot, the most used words in the speeches are state, year, and will. Among the top twenty words are: School, Education, Business, and work.
 
-Let's select a few words, and compare the words relative frequencies by party affiliation. The words selected are: Education, Health, Budget, Economy, and Business. The stemming function did not do a good job. It was meant to convert words such as economy, economical into their root words. But, that did not happen. We will do it manually.
+Let's select a few words, and compare the words relative frequencies by party affiliation. The words selected are: Education, Health, Budget, Economy, and Business. The stemming function did not do a good job. It was meant to convert words such as *economy*, *economical* into their root words. But, that did not happen. We will do it manually.
 
 ```{r, warning=FALSE, message=FALSE}
 Sp_dtm_df$econom <- Sp_dtm_df$econom + Sp_dtm_df$economi
@@ -191,7 +191,7 @@ Sp_dtm_df$healthi <- NULL
 Sp_dtm_df$healthcar <- NULL
 ```
 
-Now, let's select the words of interest, and explore them with a barplot.
+Now, let's select the words of interest, and explore them using a barplot.
 
 
 ```{r}
@@ -217,7 +217,7 @@ p_DR + scale_fill_manual(values = c('blue','red')) +
 
 The barplot shows that, relatively, Democrats have used the words health, economy, and business more often than Republicans. The Republicans have used the words education and budget more often than the Democrats.
 
-An alternative way to look at the words frequencies is to use a wordcloud. We will do so first, for all governors, then by party affiliation. Before then, we remove the words state, will, and year from the data. I am assuming that they are not important since they are so common in all speeches.
+An alternative way to look at the words frequencies is to use a wordcloud. We will do so first, for all governors, then by party affiliation. Before that, we remove the words *state*, *will*, and *year* from the data. I am assuming that they are not important since they are so common in all speeches.
 
 ```{r, warning=FALSE, message=FALSE}
 words_freq <- words_freq[words_freq$freq <= 900, ]
@@ -235,7 +235,7 @@ wordcloud(words = words_freq$words, freq = words_freq$freq, min.freq = 1,
           colors=brewer.pal(8, "Dark2"))
 ```
 
-The wordcloud above indicates that people, education, health, business, family, budget are all prominent words in the speeches. Let's look at the wordcloud by party affiliation (Democrats vs. Republicans).
+The wordcloud above indicates that *people*, *education*, *health*, *business*, *family*, *budget* are all prominent words in the speeches. Let's look at the wordcloud by party affiliation (Democrats vs. Republicans).
 
 
 ```{r, fig.height=10, fig.width=10, message=FALSE, warning=FALSE}
@@ -248,9 +248,9 @@ row.names(comp_data) <- names(dem_freq)
 comparison.cloud(comp_data,max.words=250,random.order=FALSE, colors = c("blue", "red"))
 ```
 
-Clearly, Democrats and Republicans' governors focused on different words during their 2018 SoSAs. Paradoxically, while Democrates used words related to the economy (fair, build, business, work, train) more often, Republicans used more words related to the state (govern, people, citizen, service, reform). There are much more differences we can highlight, based on this wordcloud. What other differences can you highlight? I leave that to you.
+Clearly, Democrats and Republicans governors focused on different words during their 2018 SoSAs. Paradoxically, while Democrates used words related to the economy (fair, build, business, work, train) more often, Republicans used more words related to the state (govern, people, citizen, service, reform). There are much more differences that we can highlight, based on this wordcloud. What other differences can you highlight? I leave that to you.
 
 # Conclusion
 
-This post has presented the steps from collecting text data from the web to exploring the data. Given that more data are found online these days, web scraping is certainly a valuable skill for data analytics. Converting the text data into a matrix of words counts allows us to perform traditional data exploration. Additional exploratory tools (such as wordcloud) designed for the particular case of text data exists. In this post, we went through introductory level tools of text analytics. Text analytics is an exiting branch of statistics (or machine learning if you will). In my opinion, text anlytics is probably one of the most effective ways to learn data analysis, since nothing in text analytics is trivial, and exploratory analysis (and therefore human judgement) is paramount.
+This post has presented the steps from collecting text data from the web to exploring the data. Given that more data are found online these days, web scraping is certainly a valuable skill for data analytics. Converting the text data into a matrix of words counts allows us to perform traditional data exploration. Additional exploratory tools (such as wordcloud) designed for the particular case of text data exists. In this post, we went through introductory level tools of text analytics. Text analytics is an exciting branch of statistics (or machine learning if you will). In my opinion, text analytics is probably one of the most effective ways to learn data analysis, since nothing in text analytics is trivial, and exploratory analysis (and therefore human judgement) is paramount.
 This post is getting too long. Let's leave it here. Feel free to leave your comments below!
