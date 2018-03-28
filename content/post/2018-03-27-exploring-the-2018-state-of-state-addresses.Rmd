@@ -70,8 +70,11 @@ datatable(sp_tabl, class = 'cell-border stripe', options = list(
 ))
 ```
 
-```{r}
-head(sp_tabl)
+```{r, warning=FALSE, message=FALSE, eval=TRUE, echo=TRUE}
+library(knitr)
+library(kableExtra)
+kable(head(sp_tabl), "html") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
 
