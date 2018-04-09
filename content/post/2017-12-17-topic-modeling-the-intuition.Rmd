@@ -2,14 +2,16 @@
 title: 'Topic modeling: The Intuition'
 author: Salfo Bikienga
 date: '2017-11-17'
-slug: topic-modeling-the-intuition
 categories:
-  - Topic Modeling
+  - R
   - Text Analytics
+  - Topic Modeling
 tags:
-  - Matrix Factorization
+  - R
   - Linear Regression
+  - Matrix Factorization
   - OLS
+slug: topic-modeling-the-intuition
 ---
 
 # Introduction

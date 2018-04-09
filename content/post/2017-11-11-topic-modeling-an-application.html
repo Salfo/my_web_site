@@ -2,13 +2,17 @@
 title: 'Topic Modeling: An Application'
 author: Salfo Bikienga
 date: '2017-11-11'
-slug: topic-modeling-an-application
 categories:
+  - R
+  - Text Analytics
   - Topic Modeling
+  - LDA
 tags:
+  - R
   - LDA
   - Text Analytics
   - Topic Modeling
+slug: topic-modeling-an-application
 bibliography: reference2.bib
 ---
 
@@ -142,16 +146,16 @@ n_obs &lt;- sample(1:596, size = 10)
 sample_obs &lt;- df[n_obs,]
 sample_obs</code></pre>
 <pre><code>##                             Topic.1 Topic.2        state year party
-## NewHampshire_2012_D_522.txt   0.388   0.612 NewHampshire 2012     D
-## Washington_2007_D_465.txt     0.239   0.761   Washington 2007     D
-## SouthDakota_2007_R_405.txt    0.378   0.622  SouthDakota 2007     R
-## Illinois_2008_D_137.txt       0.465   0.535     Illinois 2008     D
-## Indiana_2005_R_145.txt        0.741   0.259      Indiana 2005     R
-## Texas_2009_R_423.txt          0.405   0.595        Texas 2009     R
-## Nebraska_2003_D_275.txt       0.759   0.241     Nebraska 2003     D
-## Indiana_2003_D_143.txt        0.361   0.639      Indiana 2003     D
-## RhodeIsland_2005_R_383.txt    0.424   0.576  RhodeIsland 2005     R
-## Utah_2012_R_540.txt           0.408   0.592         Utah 2012     R</code></pre>
+## Idaho_2011_R_129.txt          0.577   0.423        Idaho 2011     R
+## Missouri_2007_R_262.txt       0.372   0.628     Missouri 2007     R
+## Wisconsin_2010_D_490.txt      0.316   0.684    Wisconsin 2010     D
+## Arizona_2002_R_25.txt         0.594   0.406      Arizona 2002     R
+## Kansas_2011_R_173.txt         0.479   0.521       Kansas 2011     R
+## Washington_2005_D_463.txt     0.425   0.575   Washington 2005     D
+## Oregon_2013_D_583.txt         0.527   0.473       Oregon 2013     D
+## Oregon_2003_D_530.txt         0.517   0.483       Oregon 2003     D
+## California_2006_R_47.txt      0.510   0.490   California 2006     R
+## Pennsylvania_2007_D_375.txt   0.637   0.363 Pennsylvania 2007     D</code></pre>
 <p>Compute the topics’ means by party line.</p>
 <pre class="r"><code>library(dplyr)
 library(tidyr)
@@ -163,14 +167,14 @@ summarise(Topic.1 = mean(Topic.1), Topic.2 = mean(Topic.2)) %&gt;%
   mutate(pos = c(rep(75, 3), rep(25, 3)))
 df_by_party</code></pre>
 <pre><code>## # A tibble: 6 x 4
-##    party   Topic Topic_proportion   pos
-##   &lt;fctr&gt;   &lt;chr&gt;            &lt;dbl&gt; &lt;dbl&gt;
-## 1      D Topic.1               46    75
-## 2      I Topic.1               62    75
-## 3      R Topic.1               51    75
-## 4      D Topic.2               54    25
-## 5      I Topic.2               38    25
-## 6      R Topic.2               49    25</code></pre>
+##   party Topic   Topic_proportion   pos
+##   &lt;fct&gt; &lt;chr&gt;              &lt;dbl&gt; &lt;dbl&gt;
+## 1 D     Topic.1              46.   75.
+## 2 I     Topic.1              62.   75.
+## 3 R     Topic.1              51.   75.
+## 4 D     Topic.2              54.   25.
+## 5 I     Topic.2              38.   25.
+## 6 R     Topic.2              49.   25.</code></pre>
 <p>Democrats seem to talk more about education (Topic.2) than Republicans. On average, about 54% of their speeches refers to the education theme, against 49% for Republicans. Conversely, Republicans tend to talk more about budgetary issues than Democrats (51% for Republicans vs. 46% for Democrats).</p>
 <p>Clearly, these differences are not huge, and we cannot put too much stock into it. The goal here is to illustrate how one may use the topics distributions, without going into the intricacies of statistical significance.</p>
 <p>The above table can be visualized with the help of a stacked bar plot.</p>

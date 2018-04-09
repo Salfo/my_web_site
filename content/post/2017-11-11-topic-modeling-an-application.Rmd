@@ -2,13 +2,17 @@
 title: 'Topic Modeling: An Application'
 author: Salfo Bikienga
 date: '2017-11-11'
-slug: topic-modeling-an-application
 categories:
+  - R
+  - Text Analytics
   - Topic Modeling
+  - LDA
 tags:
+  - R
   - LDA
   - Text Analytics
   - Topic Modeling
+slug: topic-modeling-an-application
 bibliography: reference2.bib
 ---
 
