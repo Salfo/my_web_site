@@ -196,6 +196,11 @@ defaultContentLanguageInSubdir = false
   url = "#contact"
   weight = 6
 
+[[menu.main]]
+  name = "R-bloggers"
+  url = "https://www.r-bloggers.com/"
+  weight = 7
+
 # Taxonomies.
 [taxonomies]
   tag = "tags"
