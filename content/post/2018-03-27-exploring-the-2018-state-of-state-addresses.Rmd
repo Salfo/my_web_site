@@ -2,13 +2,15 @@
 title: Exploring the 2018 U.S Governors' State of State Addresses
 author: Salfo Bikienga
 date: '2018-03-27'
-slug: exploring-the-2018-state-of-state-addresses
 categories:
-  - Text Analytics
-tags:
+  - R
   - Text Analytics
   - Web Scraping
-  - Exploratory Data Analysis
+tags:
+  - R
+  - Text Analytics
+  - Web Scraping
+slug: exploring-the-2018-state-of-state-addresses
 ---
 
 # Introduction

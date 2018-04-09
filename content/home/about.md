@@ -22,7 +22,7 @@ weight = 5
 [[education.courses]]
   course = "PhD Candidate in Economics and Statistics. Expected Completion Date"
   institution = "University of Nebraska-Lincoln"
-  year = 2017
+  year = 2018
 
 [[education.courses]]
   course = "Masters in Economics"
