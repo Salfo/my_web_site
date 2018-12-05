@@ -180,11 +180,11 @@ p_party
 
 # Should we trust the results?
 
-Yes! We should. A mental block I faced when I started exploring topic modeling is trusting the results. If your program is like mine, latent variables models are not covered in your econometrics classes, even though they are widely used in the economics literature. In Macroeconomics, they are termed Factor Augmented Vector Autoregressive models. In Development Economics, they are used to construct indices [@Berenger2007, @Tabellini2010]. Factor models approaches are also used as instruments [@Bai2010].
+Yes! We should. A mental block I faced when I started exploring topic modeling is trusting the results. If your program is like mine, latent variables models are not covered in your econometrics classes, even though they are widely used in the economics literature. In Macroeconomics, they are termed Factor Augmented Vector Autoregressive models. In Development Economics, they are used to construct indices [@Berenger2007; @Tabellini2010]. Factor models approaches are also used as instruments [@Bai2010].
 
 But, LDA is just another factor model algorithm. It is closely related to principal component analysis (PCA). In the future, I will present the idea of factor models, and why they are "reliable".
 
-#Conclusion
+# Conclusion
 
 In sum, topic modeling in general and LDA in particular is a dimension reduction method. It consists of collapsing a matrix of words counts into a reduced matrix of topics distributions. This illustration provides a sense of its usefulness for statistical analysis. 
 
